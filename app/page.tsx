@@ -40,7 +40,7 @@ export default function Home() {
         router.push("/biodataPage");
       } else if (role === 1) {
         // Role 1 biasanya User biasa
-        router.push("/homeAdmin");
+        router.push("/jumlahUserAdmin");
       } else {
         alert("Role tidak valid atau tidak ditemukan");
       }
