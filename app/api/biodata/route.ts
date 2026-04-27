@@ -9,7 +9,7 @@ function getRole(role: string | undefined) {
 // ===================== GET =====================
 export async function GET() {
   try {
-    const cookieStore = await cookies(); // 🔥 FIX HERE
+    const cookieStore = await cookies(); //  FIX HERE
 
     const email = cookieStore.get("email")?.value;
     const role = cookieStore.get("role")?.value;
@@ -39,12 +39,12 @@ export async function GET() {
 // ===================== PUT =====================
 export async function PUT(req: Request) {
   try {
-    const cookieStore = await cookies(); // 🔥 FIX HERE
+    const cookieStore = await cookies(); //  FIX HERE
 
     const email = cookieStore.get("email")?.value;
     const role = cookieStore.get("role")?.value;
 
-    // 🔥 ONLY ROLE 2 CAN ACCESS
+    //  ONLY ROLE 2 CAN ACCESS
     if (!email || getRole(role) !== 2) {
       return NextResponse.json(
         { message: "Unauthorized" },

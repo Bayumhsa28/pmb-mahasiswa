@@ -18,7 +18,7 @@ export async function POST(req: Request) {
       throw new Error("Password minimal 6 karakter");
     }
 
-    // ✅ 1. CEK OTP
+    //  1. CEK OTP
     const pendingQuery = await client.query(
       `SELECT * FROM pending_users 
        WHERE email = $1 AND verification_code = $2 
@@ -30,10 +30,10 @@ export async function POST(req: Request) {
       throw new Error("Kode verifikasi salah atau sudah kadaluarsa");
     }
 
-    // ✅ 2. HASH PASSWORD BARU
+    //  2. HASH PASSWORD BARU
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    // ✅ 3. UPDATE PASSWORD DI BIODATA (TANPA ID)
+    //  3. UPDATE PASSWORD DI BIODATA (TANPA ID)
     const updateResult = await client.query(
       `UPDATE biodata 
        SET password = $1 
@@ -41,12 +41,12 @@ export async function POST(req: Request) {
       [hashedPassword, email]
     );
 
-    // ✅ cek apakah user ada
+    //  cek apakah user ada
     if (updateResult.rowCount === 0) {
       throw new Error("User tidak ditemukan di biodata");
     }
 
-    // ✅ 4. HAPUS OTP
+    //  4. HAPUS OTP
     await client.query(
       `DELETE FROM pending_users WHERE email = $1`,
       [email]
@@ -62,7 +62,7 @@ export async function POST(req: Request) {
   } catch (err: any) {
     await client.query("ROLLBACK");
 
-    console.error("❌ RESET ERROR:", err.message);
+    console.error(" RESET ERROR:", err.message);
 
     return NextResponse.json(
       { message: err.message || "Gagal reset password" },

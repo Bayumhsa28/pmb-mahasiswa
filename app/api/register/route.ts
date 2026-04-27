@@ -5,11 +5,11 @@ import { Resend } from "resend";
 
 export async function POST(req: Request) {
   try {
-    // ✅ Ambil API KEY
+    //  Ambil API KEY
     const apiKey = process.env.RESEND_API_KEY;
 
     if (!apiKey) {
-      console.error("❌ RESEND_API_KEY belum diset di .env.local");
+      console.error(" RESEND_API_KEY belum diset di .env.local");
       return NextResponse.json(
         { message: "Server belum dikonfigurasi dengan benar" },
         { status: 500 }
@@ -30,7 +30,7 @@ export async function POST(req: Request) {
       statusNikah,
     } = body;
 
-    // ✅ Validasi
+    //  Validasi
     if (!nama || !email || !password) {
       return NextResponse.json(
         { message: "Nama, email, dan password wajib diisi" },
@@ -38,13 +38,13 @@ export async function POST(req: Request) {
       );
     }
 
-    // ✅ Hash password
+    //  Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // ✅ Generate kode verifikasi
+    //  Generate kode verifikasi
     const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // ✅ Simpan ke DB
+    //  Simpan ke DB
     const query = `
       INSERT INTO pending_users 
       (nama_lengkap, tanggal_lahir, alamat, no_hp, email, password, gender, status_nikah, verification_code)
@@ -65,7 +65,7 @@ export async function POST(req: Request) {
 
     await pool.query(query, values);
 
-    // ✅ Kirim email
+    //  Kirim email
     const { error } = await resend.emails.send({
       from: "onboarding@resend.dev",
       to: email,
@@ -80,7 +80,7 @@ export async function POST(req: Request) {
     });
 
     if (error) {
-      console.error("❌ Resend error:", error);
+      console.error(" Resend error:", error);
       return NextResponse.json(
         { message: "Gagal kirim email" },
         { status: 500 }
@@ -93,7 +93,7 @@ export async function POST(req: Request) {
     });
 
   } catch (err: any) {
-    console.error("❌ SERVER ERROR:", err);
+    console.error(" SERVER ERROR:", err);
     return NextResponse.json(
       { message: err.message || "Terjadi kesalahan server" },
       { status: 500 }

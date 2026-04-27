@@ -16,7 +16,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // ✅ ambil dari biodata
+    //  ambil dari biodata
     const result = await pool.query(
       `SELECT email, password, nama_lengkap, role
        FROM biodata
@@ -73,7 +73,7 @@ export async function POST(req: Request) {
       maxAge: 60 * 60 * 24,
     });
 
-    // 👉 penting buat biodata page
+    //  penting buat biodata page
     response.cookies.set("email", user.email);
     response.cookies.set("role", String(user.role));
 

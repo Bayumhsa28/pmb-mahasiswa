@@ -6,12 +6,12 @@ export default function Header() {
 
   const handleLogout = async () => {
     try {
-      // 🔥 panggil API untuk hapus cookies
+      //  panggil API untuk hapus cookies
       await fetch("/api/logout", {
         method: "POST",
       });
 
-      // 🔥 redirect ke login
+      //  redirect ke login
       router.push("/");
     } catch (err) {
       console.log("Logout error:", err);

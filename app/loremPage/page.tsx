@@ -12,7 +12,7 @@ export default function LoremPages() {
     const checkAuth = () => {
       const cookies = document.cookie;
 
-      // 🔥 cek token / email login
+      //  cek token / email login
       const hasAuth = cookies.includes("token=") || cookies.includes("email=");
 
       if (!hasAuth) {
@@ -25,7 +25,7 @@ export default function LoremPages() {
     checkAuth();
   }, [router]);
 
-  // 🔥 optional loading state biar tidak flash konten
+  //  optional loading state biar tidak flash konten
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">

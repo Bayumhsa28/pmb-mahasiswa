@@ -42,7 +42,7 @@ export default function ForgotPasswordPage() {
     setStatus("idle");
 
     try {
-      // ✅ FIXED: /api/lupaPassword (sesuai backend Anda)
+      //  FIXED: /api/lupaPassword (sesuai backend Anda)
       const res = await fetch("/api/lupaPassword", {
         method: "POST",
         headers: {

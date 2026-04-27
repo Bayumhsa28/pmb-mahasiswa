@@ -15,13 +15,13 @@ export async function POST(req: Request) {
       );
     }
 
-    // ✅ 1. CEK USER DI BIODATA
+    //  1. CEK USER DI BIODATA
     const userQuery = await pool.query(
       `SELECT * FROM biodata WHERE email = $1`,
       [email]
     );
 
-    // ⚠️ SECURITY: jangan kasih tau email ada/tidak
+    //  SECURITY: jangan kasih tau email ada/tidak
     if (userQuery.rows.length === 0) {
       return NextResponse.json(
         { message: "Jika email terdaftar, kode akan dikirim" },
@@ -31,18 +31,18 @@ export async function POST(req: Request) {
 
     const user = userQuery.rows[0];
 
-    // ✅ 2. HAPUS OTP LAMA (kalau ada)
+    //  2. HAPUS OTP LAMA (kalau ada)
     await pool.query(
       "DELETE FROM pending_users WHERE email = $1",
       [email]
     );
 
-    // ✅ 3. GENERATE OTP
+    //  3. GENERATE OTP
     const verificationCode = Math.floor(
       100000 + Math.random() * 900000
     ).toString();
 
-    // ✅ 4. SIMPAN KE pending_users (hanya field yang ada)
+    //  4. SIMPAN KE pending_users (hanya field yang ada)
     await pool.query(
       `INSERT INTO pending_users 
       (nama_lengkap, tanggal_lahir, alamat, no_hp, email, password, gender, status_nikah, verification_code)
@@ -61,7 +61,7 @@ export async function POST(req: Request) {
       ]
     );
 
-    // ✅ 5. KIRIM EMAIL
+    //  5. KIRIM EMAIL
     try {
       await resend.emails.send({
         from: "onboarding@resend.dev",
@@ -77,7 +77,7 @@ export async function POST(req: Request) {
         `,
       });
     } catch (emailError: any) {
-      console.error("❌ EMAIL ERROR:", emailError.message);
+      console.error(" EMAIL ERROR:", emailError.message);
       // tetap lanjut (biar gak bocorin info user)
     }
 
@@ -87,7 +87,7 @@ export async function POST(req: Request) {
     });
 
   } catch (err: any) {
-    console.error("❌ SERVER ERROR:", err);
+    console.error(" SERVER ERROR:", err);
     return NextResponse.json(
       { message: "Server error" },
       { status: 500 }

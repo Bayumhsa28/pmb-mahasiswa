@@ -12,7 +12,7 @@ export default function Biodata() {
   const [kabupatenList, setKabupatenList] = useState<any[]>([]);
   const [initialized, setInitialized] = useState(false);
 
-  // 🔐 AUTH + LOAD DATA
+  //  AUTH + LOAD DATA
   useEffect(() => {
     let mounted = true;
 
@@ -29,7 +29,7 @@ export default function Biodata() {
 
         if (!mounted) return;
 
-        // 🔥 hanya isi sekali dari DB
+        //  hanya isi sekali dari DB
         if (!initialized) {
           const safeData = {
             nama_lengkap: result?.nama_lengkap ?? "",
@@ -55,7 +55,7 @@ export default function Biodata() {
           setData(safeData);
           setInitialized(true);
 
-          // 🔥 AUTO LOAD KABUPATEN
+          //  AUTO LOAD KABUPATEN
           if (safeData.provinsi) {
             fetch(`/api/kabupaten?provinsi_id=${safeData.provinsi}`)
               .then((res) => res.json())

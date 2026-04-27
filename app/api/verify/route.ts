@@ -68,7 +68,7 @@ export async function POST(req: Request) {
         user.password,
         user.gender,
         user.status_nikah,
-        defaultRole, // ✅ selalu USER (2)
+        defaultRole, //  selalu USER (2)
       ]
     );
 
@@ -84,7 +84,7 @@ export async function POST(req: Request) {
     });
 
   } catch (err: any) {
-    console.error("❌ VERIFY ERROR:", err);
+    console.error(" VERIFY ERROR:", err);
     return NextResponse.json(
       { message: err.message || "Terjadi kesalahan server" },
       { status: 500 }
