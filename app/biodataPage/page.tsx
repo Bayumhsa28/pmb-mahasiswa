@@ -21,7 +21,7 @@ export default function Biodata() {
         const res = await fetch("/api/biodata");
 
         if (res.status === 401) {
-          router.push("/login");
+          router.push("/");
           return;
         }
 
@@ -66,7 +66,7 @@ export default function Biodata() {
           }
         }
       } catch (err) {
-        router.push("/login");
+        router.push("/");
       }
     };
 

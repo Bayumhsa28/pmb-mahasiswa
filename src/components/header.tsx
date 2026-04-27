@@ -12,7 +12,7 @@ export default function Header() {
       });
 
       // 🔥 redirect ke login
-      router.push("/login");
+      router.push("/");
     } catch (err) {
       console.log("Logout error:", err);
     }
