@@ -31,13 +31,6 @@ export default function Header() {
             Jumlah User
           </Link>
 
-          <Link
-            href="/loremPageAdmin"
-            className="text-gray-600 hover:text-blue-600 transition-colors font-medium"
-          >
-            Lorem
-          </Link>
-
           <button
             onClick={handleLogout}
             className="text-red-600 hover:text-red-800 font-semibold transition-colors"
