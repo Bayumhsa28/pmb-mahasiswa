@@ -12,7 +12,11 @@ export default function Biodata() {
   const [kabupatenList, setKabupatenList] = useState<any[]>([]);
   const [initialized, setInitialized] = useState(false);
 
-  //  AUTH + LOAD DATA
+  // FOTO STATE
+  const [foto, setFoto] = useState<File | null>(null);
+  const [dragActive, setDragActive] = useState(false);
+
+  // AUTH + LOAD DATA
   useEffect(() => {
     let mounted = true;
 
@@ -29,7 +33,6 @@ export default function Biodata() {
 
         if (!mounted) return;
 
-        //  hanya isi sekali dari DB
         if (!initialized) {
           const safeData = {
             nama_lengkap: result?.nama_lengkap ?? "",
@@ -55,13 +58,10 @@ export default function Biodata() {
           setData(safeData);
           setInitialized(true);
 
-          //  AUTO LOAD KABUPATEN
           if (safeData.provinsi) {
             fetch(`/api/kabupaten?provinsi_id=${safeData.provinsi}`)
               .then((res) => res.json())
-              .then((res) => {
-                setKabupatenList(Array.isArray(res) ? res : []);
-              })
+              .then((res) => setKabupatenList(Array.isArray(res) ? res : []))
               .catch(() => setKabupatenList([]));
           }
         }
@@ -85,7 +85,7 @@ export default function Biodata() {
       .catch(() => setProvinsiList([]));
   }, []);
 
-  // GET KABUPATEN WHEN PROVINSI CHANGE
+  // GET KABUPATEN
   useEffect(() => {
     if (!data?.provinsi) {
       setKabupatenList([]);
@@ -98,15 +98,13 @@ export default function Biodata() {
       signal: controller.signal,
     })
       .then((res) => res.json())
-      .then((res) => {
-        setKabupatenList(Array.isArray(res) ? res : []);
-      })
+      .then((res) => setKabupatenList(Array.isArray(res) ? res : []))
       .catch(() => setKabupatenList([]));
 
     return () => controller.abort();
   }, [data.provinsi]);
 
-  // HANDLE CHANGE
+  // HANDLE INPUT CHANGE
   const handleChange = (e: any) => {
     const { name, value } = e.target;
 
@@ -117,7 +115,7 @@ export default function Biodata() {
     }));
   };
 
-  // SUBMIT UPDATE
+  // SUBMIT BIODATA
   const handleSubmit = async () => {
     try {
       await fetch("/api/biodata", {
@@ -130,6 +128,47 @@ export default function Biodata() {
     } catch (err) {
       alert("Gagal update data");
     }
+  };
+
+  // UPLOAD FOTO
+  const handleUploadFoto = async () => {
+    if (!foto) return alert("Pilih foto dulu");
+
+    const formData = new FormData();
+    formData.append("foto", foto);
+
+    const res = await fetch("/api/biodata/photo", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (res.ok) {
+      alert("Foto berhasil diupload");
+    } else {
+      alert("Upload gagal");
+    }
+  };
+
+  // DRAG HANDLER
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  // DROP HANDLER
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+
+    const file = e.dataTransfer.files?.[0];
+    if (file) setFoto(file);
   };
 
   const inputStyle =
@@ -147,6 +186,46 @@ export default function Biodata() {
         </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* FOTO DRAG & DROP */}
+          <div className="md:col-span-2">
+            <label className={labelStyle}>Foto (Drag & Drop / Click)</label>
+
+            <div
+              onDragEnter={handleDrag}
+              onDragOver={handleDrag}
+              onDragLeave={handleDrag}
+              onDrop={handleDrop}
+              onClick={() => document.getElementById("fileInput")?.click()}
+              className={`w-full border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-all
+                ${dragActive ? "border-blue-500 bg-blue-50" : "border-gray-300"}`}
+            >
+              <input
+                id="fileInput"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => setFoto(e.target.files?.[0] || null)}
+              />
+
+              {foto ? (
+                <p className="text-sm font-medium text-gray-700">
+                  File dipilih: {foto.name}
+                </p>
+              ) : (
+                <p className="text-gray-500">
+                  Drag & drop foto di sini atau klik untuk memilih file
+                </p>
+              )}
+            </div>
+
+            <button
+              onClick={handleUploadFoto}
+              className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 mt-2 rounded-lg"
+            >
+              Upload Foto
+            </button>
+          </div>
+
           <div>
             <label className={labelStyle}>Nama Lengkap</label>
             <input
@@ -346,12 +425,20 @@ export default function Biodata() {
           </div>
         </div>
 
-        <div className="pt-4">
+        {/* BUTTONS */}
+        <div className="pt-4 space-y-3">
           <button
             onClick={handleSubmit}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg"
           >
             Simpan Data
+          </button>
+
+          <button
+            onClick={() => window.open("/api/biodata/pdf")}
+            className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-lg"
+          >
+            Download PDF Biodata
           </button>
         </div>
       </div>
