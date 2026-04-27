@@ -61,6 +61,17 @@ export async function PUT(req: Request) {
 
     const old = current.rows[0];
 
+    let provinsiNama = old.provinsi;
+
+if (body.provinsi) {
+  const result = await pool.query(
+    `SELECT nama FROM provinsi WHERE id = $1`,
+    [body.provinsi]
+  );
+
+  provinsiNama = result.rows[0]?.nama ?? old.provinsi;
+}
+
     await pool.query(
       `UPDATE biodata SET
         nama_lengkap = $1,
@@ -86,7 +97,7 @@ export async function PUT(req: Request) {
         body.alamat_ktp ?? old.alamat_ktp,
         body.alamat_lengkap_saat_ini ?? old.alamat_lengkap_saat_ini,
         body.kecamatan ?? old.kecamatan,
-        body.provinsi ?? old.provinsi,
+        provinsiNama,
         body.kabupaten ?? old.kabupaten,
         body.nomor_hp ?? old.nomor_hp,
         body.kewarganegaraan ?? old.kewarganegaraan,
