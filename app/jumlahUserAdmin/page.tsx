@@ -52,28 +52,42 @@ export default function JumlahUserAdminPage() {
   const handleDelete = async () => {
     if (!selectedDelete) return;
 
-    await fetch("/api/jumlahUserAdmin", {
+    const res = await fetch("/api/jumlahUserAdmin", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: selectedDelete }),
     });
 
-    setShowDelete(false);
-    fetchData();
+    const result = await res.json();
+
+    if (res.ok) {
+      alert("Data berhasil dihapus");
+      setShowDelete(false);
+      fetchData();
+    } else {
+      alert(result.message || "Gagal menghapus data");
+    }
   };
 
   // ================= UPDATE =================
   const handleUpdate = async () => {
     if (!selectedEdit) return;
 
-    await fetch("/api/jumlahUserAdmin", {
+    const res = await fetch("/api/jumlahUserAdmin", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(selectedEdit),
     });
 
-    setIsEditOpen(false);
-    fetchData();
+    const result = await res.json();
+
+    if (res.ok) {
+      alert("Data berhasil diupdate");
+      setIsEditOpen(false);
+      fetchData();
+    } else {
+      alert(result.message || "Gagal update data");
+    }
   };
 
   if (loading)
