@@ -15,6 +15,9 @@ export default function JumlahUserAdminPage() {
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [selectedDelete, setSelectedDelete] = useState<any>(null);
 
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [editData, setEditData] = useState<any>(null);
+
   const router = useRouter();
 
   // ================= LOGOUT =================
@@ -47,12 +50,12 @@ export default function JumlahUserAdminPage() {
 
   // ================= LOCK SCROLL =================
   useEffect(() => {
-    if (isDetailOpen || showDelete) {
+    if (isDetailOpen || showDelete || isEditOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "auto";
     }
-  }, [isDetailOpen, showDelete]);
+  }, [isDetailOpen, showDelete, isEditOpen]);
 
   // ================= DELETE =================
   const handleDelete = async () => {
@@ -68,7 +71,28 @@ export default function JumlahUserAdminPage() {
     fetchData();
   };
 
-  // ================= LOADING =================
+  // ================= EDIT =================
+  const openEdit = (user: any) => {
+    const { password, ...safeData } = user; // ❌ remove password
+    setEditData(safeData);
+    setIsEditOpen(true);
+  };
+
+  const handleEditChange = (e: any) => {
+    setEditData({ ...editData, [e.target.name]: e.target.value });
+  };
+
+  const handleSaveEdit = async () => {
+    await fetch("/api/jumlahUserAdmin", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(editData),
+    });
+
+    setIsEditOpen(false);
+    fetchData();
+  };
+
   if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center bg-orange-500 text-white font-black">
@@ -84,6 +108,7 @@ export default function JumlahUserAdminPage() {
         isMenuOpen={isMenuOpen}
       />
 
+      {/* ================= TABLE ================= */}
       <main className="max-w-7xl mx-auto p-6">
         <div className="bg-white rounded-2xl shadow border overflow-hidden">
           <table className="w-full text-left border-collapse">
@@ -92,9 +117,7 @@ export default function JumlahUserAdminPage() {
                 <th className="p-4 text-xs font-bold uppercase">Email</th>
                 <th className="p-4 text-xs font-bold uppercase">Nama</th>
                 <th className="p-4 text-xs font-bold uppercase">HP</th>
-                <th className="p-4 text-xs font-bold uppercase">
-                  Jenis Kelamin
-                </th>
+                <th className="p-4 text-xs font-bold uppercase">JK</th>
                 <th className="p-4 text-xs font-bold uppercase text-center">
                   Aksi
                 </th>
@@ -119,11 +142,19 @@ export default function JumlahUserAdminPage() {
 
                   <td className="p-4 text-gray-600">{u.nomor_hp}</td>
 
-                  <td className="p-4 text-gray-600">
-                    {u.jenis_kelamin || "-"}
-                  </td>
+                  <td className="p-4 text-gray-600">{u.jenis_kelamin}</td>
 
-                  <td className="p-4 text-center">
+                  <td className="p-4 text-center flex gap-2 justify-center">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openEdit(u);
+                      }}
+                      className="px-3 py-1 text-xs font-bold text-blue-500 bg-blue-50 border border-blue-200 rounded hover:bg-blue-500 hover:text-white"
+                    >
+                      Edit
+                    </button>
+
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -142,7 +173,7 @@ export default function JumlahUserAdminPage() {
         </div>
       </main>
 
-      {/* ================= DETAIL MODAL ================= */}
+      {/* ================= DETAIL (NO PASSWORD) ================= */}
       {isDetailOpen && selectedUser && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
           <div
@@ -153,39 +184,13 @@ export default function JumlahUserAdminPage() {
           <div className="relative bg-white p-6 rounded-xl w-full max-w-md">
             <h2 className="font-bold mb-4">Detail Biodata</h2>
 
-            <p>
-              <b>Email:</b> {selectedUser.email}
-            </p>
-            <p>
-              <b>Nama:</b> {selectedUser.nama_lengkap}
-            </p>
-            <p>
-              <b>Tanggal Lahir:</b> {selectedUser.tanggal_lahir}
-            </p>
-            <p>
-              <b>Tempat Lahir:</b> {selectedUser.tempat_lahir}
-            </p>
-            <p>
-              <b>Kota:</b> {selectedUser.kota_lahir}
-            </p>
-            <p>
-              <b>Provinsi:</b> {selectedUser.provinsi_lahir}
-            </p>
-            <p>
-              <b>Jenis Kelamin:</b> {selectedUser.jenis_kelamin}
-            </p>
-            <p>
-              <b>Status Nikah:</b> {selectedUser.status_nikah}
-            </p>
-            <p>
-              <b>Agama:</b> {selectedUser.agama}
-            </p>
-            <p>
-              <b>HP:</b> {selectedUser.nomor_hp}
-            </p>
-            <p>
-              <b>Alamat:</b> {selectedUser.alamat_lengkap_saat_ini}
-            </p>
+            {Object.entries(selectedUser)
+              .filter(([key]) => key !== "password") // ❌ hide password
+              .map(([key, value]) => (
+                <p key={key}>
+                  <b>{key}:</b> {String(value)}
+                </p>
+              ))}
 
             <button
               onClick={() => setIsDetailOpen(false)}
@@ -197,7 +202,51 @@ export default function JumlahUserAdminPage() {
         </div>
       )}
 
-      {/* ================= DELETE MODAL ================= */}
+      {/* ================= EDIT (NO PASSWORD) ================= */}
+      {isEditOpen && editData && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div
+            className="absolute inset-0 bg-black/60"
+            onClick={() => setIsEditOpen(false)}
+          />
+
+          <div className="relative bg-white p-6 rounded-xl w-full max-w-2xl max-h-[80vh] overflow-y-auto">
+            <h2 className="font-bold mb-4">Edit Biodata</h2>
+
+            {Object.keys(editData)
+              .filter((key) => key !== "password") // ❌ hide password
+              .map((key) => (
+                <div key={key} className="mb-2">
+                  <label className="text-xs font-bold">{key}</label>
+                  <input
+                    name={key}
+                    value={editData[key] || ""}
+                    onChange={handleEditChange}
+                    className="w-full border p-2 rounded"
+                  />
+                </div>
+              ))}
+
+            <div className="flex gap-2 mt-4">
+              <button
+                onClick={handleSaveEdit}
+                className="bg-green-500 text-white px-4 py-2 rounded"
+              >
+                Simpan
+              </button>
+
+              <button
+                onClick={() => setIsEditOpen(false)}
+                className="bg-gray-300 px-4 py-2 rounded"
+              >
+                Batal
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ================= DELETE ================= */}
       {showDelete && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
           <div
@@ -205,10 +254,10 @@ export default function JumlahUserAdminPage() {
             onClick={() => setShowDelete(false)}
           />
 
-          <div className="relative bg-white p-6 rounded-xl w-full max-w-md text-center">
-            <p className="mb-4">Hapus user ini?</p>
+          <div className="relative bg-white p-6 rounded-xl text-center">
+            <p>Hapus user ini?</p>
 
-            <div className="flex gap-3 justify-center">
+            <div className="flex gap-3 justify-center mt-4">
               <button
                 onClick={() => setShowDelete(false)}
                 className="px-4 py-2 bg-gray-200 rounded"

@@ -17,12 +17,6 @@ export default function LoremPages() {
       const roleMatch = cookies.match(/role=(\d+)/);
       const role = roleMatch ? Number(roleMatch[1]) : null;
 
-      //  tidak login
-      if (!hasToken) {
-        router.replace("/");
-        return;
-      }
-
       //  bukan admin (role 1)
       if (role !== 1) {
         router.replace("/");
