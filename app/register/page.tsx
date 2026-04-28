@@ -3,8 +3,6 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
-// import Button from "../../src/components/button";
-// import closeIcon from "../../src/ikon/close.svg";
 
 type FormType = {
   nama: string;

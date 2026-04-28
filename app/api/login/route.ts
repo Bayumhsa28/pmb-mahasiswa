@@ -43,7 +43,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // token
+    // token mengambil dari select
     const token = jwt.sign(
       {
         email: user.email,

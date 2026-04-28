@@ -3,7 +3,6 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-// import closeIcon from "../../src/ikon/close.svg";
 
 type FormType = {
   email: string;

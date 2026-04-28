@@ -41,7 +41,7 @@ export async function POST(req: Request) {
     //  Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    //  Generate kode verifikasi
+    //  Generate kode verifikasi minimal code 100000 + (angka random * 900000 berupa desimal)
     const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
 
     //  Simpan ke DB
@@ -79,6 +79,7 @@ export async function POST(req: Request) {
       `,
     });
 
+    //permasalaha server
     if (error) {
       console.error(" Resend error:", error);
       return NextResponse.json(

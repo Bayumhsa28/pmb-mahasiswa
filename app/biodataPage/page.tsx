@@ -55,6 +55,7 @@ export default function Biodata() {
             agama: result?.agama ?? "",
           };
 
+          //mengisi data dan apakah status sudah siap
           setData(safeData);
           setInitialized(true);
 
@@ -66,7 +67,8 @@ export default function Biodata() {
           }
         }
       } catch (err) {
-        router.push("/");
+        console.log(err);
+        // router.push("/");
       }
     };
 
@@ -151,8 +153,8 @@ export default function Biodata() {
 
   // DRAG HANDLER
   const handleDrag = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+    e.preventDefault(); //kontrol drag and drop
+    e.stopPropagation(); //mencega event menyebar ke varent (biar ga berantakan)
 
     if (e.type === "dragenter" || e.type === "dragover") {
       setDragActive(true);

@@ -3,8 +3,6 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
-// import Button from "../src/components/button";
-// import logo from "../src/ikon/kunci.png";
 
 export default function Home() {
   const router = useRouter();
@@ -56,14 +54,6 @@ export default function Home() {
       <div className="bg-zinc-900 rounded-2xl shadow-2xl w-full max-w-4xl flex overflow-hidden border border-zinc-700">
         {/* LEFT SIDE */}
         <div className="w-1/2 bg-black text-white flex flex-col items-center justify-center p-8">
-          {/* <Image
-            src={logo}
-            alt="Logo"
-            width={100}
-            height={100}
-            className="mb-4 drop-shadow-lg"
-          /> */}
-
           <h1 className="text-3xl font-bold text-center">Universitas</h1>
 
           <p className="text-sm mt-2 text-center opacity-80">
